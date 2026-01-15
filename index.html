@@ -3,709 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure 6-Digit Code System</title>
+    <title>Device Check Portal</title>
     <style>
-        /* iOS/Mac မဟုတ်ရင် ပြမယ့် message style */
-        .restricted-message {
-            display: none;
-            text-align: center;
-            padding: 50px 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-            background: linear-gradient(135deg, #1c63f2 0%, #0d4bc3 100%);
-            color: white;
-            min-height: 100vh;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-        
-        .restricted-container {
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Main content style */
-        .main-content {
-            display: none;
-        }
-        
         body {
-            background-color: #1c63f2;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            text-align: center;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .container {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 90%;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        input[type="text"] {
-            padding: 16px;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            margin: 15px 0;
-            width: 85%;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-        
-        button {
-            padding: 16px 30px;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            background-color: #1ca40a;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 90%;
-            margin: 10px 0;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 600;
-        }
-        
-        button:hover { 
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        button:disabled { 
-            background-color: #757575; 
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        #message { 
-            margin-top: 20px; 
-            font-size: 16px; 
-            min-height: 25px;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        
-        .error { 
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-        }
-        
-        .success { 
-            color: #66ff66; 
-            background: rgba(102, 255, 102, 0.1);
-        }
-        
-        .buy-button {
-            background-color: #ff5722;
-        }
-        
-        .buy-button:hover {
-            background-color: #e64a19;
-        }
-        
-        .device-info {
-            margin-top: 30px;
-            padding: 15px;
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            font-size: 14px;
-            text-align: left;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         
-        .apple-icon {
+        .logo {
             font-size: 80px;
             margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
         
         h1 {
-            font-size: 32px;
-            font-weight: 700;
+            font-size: 36px;
             margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
-        .subtitle {
-            font-size: 16px;
+        .device-info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .status {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 25px 0;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .apple-status {
+            background: rgba(0, 122, 255, 0.3);
+            color: #007AFF;
+        }
+        
+        .non-apple-status {
+            background: rgba(255, 149, 0, 0.3);
+            color: #FF9500;
+        }
+        
+        .redirect-message {
+            margin-top: 30px;
+            font-size: 18px;
             opacity: 0.9;
-            margin-bottom: 30px;
-            font-weight: 300;
         }
         
-        /* Loading animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #007AFF;
             border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
         
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- iOS/Mac မဟုတ်ရင် ပြမယ့် message -->
-    <div id="restrictedMessage" class="restricted-message">
-        <div class="restricted-container">
-            <div class="apple-icon">🍎</div>
-            <h1>Apple Exclusive Content</h1>
-            <p style="font-size: 18px; line-height: 1.6; margin-bottom: 20px;">
-                This secure code system is optimized specifically for Apple devices.
-            </p>
-            <p style="font-size: 16px; opacity: 0.9; margin-bottom: 30px;">
-                Please access using an iPhone, iPad, Mac, or iPod touch.
-            </p>
-            
-            <div style="
-                background: rgba(255,255,255,0.15);
-                padding: 20px;
-                border-radius: 12px;
-                margin: 25px 0;
-                text-align: left;
-                backdrop-filter: blur(10px);
-            ">
-                <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                    <div style="width: 10px; height: 10px; background: #4CAF50; border-radius: 50%; margin-right: 10px;"></div>
-                    <strong>Compatible Devices:</strong> All Apple Devices
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                    <div style="width: 10px; height: 10px; background: #FF9800; border-radius: 50%; margin-right: 10px;"></div>
-                    <strong>Recommended Browser:</strong> Safari (Best Compatibility)
-                </div>
-                <div style="display: flex; align-items: center;">
-                    <div style="width: 10px; height: 10px; background: #2196F3; border-radius: 50%; margin-right: 10px;"></div>
-                    <strong>Supported:</strong> iPhone, iPad, Mac, iPod touch
-                </div>
-            </div>
-            
-            <div style="
-                background: rgba(0,0,0,0.2);
-                padding: 15px;
-                border-radius: 10px;
-                margin-top: 20px;
-                font-size: 12px;
-                font-family: 'SF Mono', monospace;
-                word-break: break-all;
-            ">
-                <strong>Device Detection:</strong> <span id="detectedDevice">Checking...</span><br>
-                <strong>Platform:</strong> <span id="detectedPlatform">Checking...</span><br>
-                <strong>Browser:</strong> <span id="detectedBrowser">Checking...</span><br>
-                <strong>User Agent:</strong> <span id="userAgentShort" style="font-size: 10px;">Checking...</span>
-            </div>
-            
-            <div id="debugInfo" style="
-                background: rgba(255,0,0,0.1);
-                padding: 10px;
-                border-radius: 8px;
-                margin-top: 15px;
-                font-size: 11px;
-                display: none;
-            ">
-                <strong>Debug Info:</strong> <span id="debugText"></span>
-            </div>
+    <div class="container">
+        <div class="logo">📱</div>
+        <h1>Device Detection Portal</h1>
+        <p>Checking your device and browser compatibility...</p>
+        
+        <div class="spinner" id="spinner"></div>
+        
+        <div class="device-info">
+            <h3>Device Information:</h3>
+            <p><strong>Platform:</strong> <span id="platform">Detecting...</span></p>
+            <p><strong>Browser:</strong> <span id="browser">Detecting...</span></p>
+            <p><strong>User Agent:</strong> <span id="userAgent">Detecting...</span></p>
+            <p><strong>Apple Device:</strong> <span id="appleStatus">Checking...</span></p>
         </div>
-    </div>
-
-    <!-- iOS/Mac ဆိုမှပြမယ့် main content -->
-    <div id="mainContent" class="main-content">
-        <div class="container">
-            <h1>🔒 Secure 6-Digit Code</h1>
-            <div class="subtitle">Apple Device Verified ✓</div>
-            
-            <div style="margin-bottom: 20px;">
-                <div style="
-                    background: rgba(255,255,255,0.1);
-                    padding: 15px;
-                    border-radius: 10px;
-                    margin-bottom: 15px;
-                    font-size: 14px;
-                    text-align: left;
-                ">
-                    <strong>Device Status:</strong> <span id="appleDeviceStatus" style="color: #4CAF50;">✓ Apple Device Detected</span><br>
-                    <span id="deviceDetails" style="font-size: 12px; opacity: 0.8;"></span>
-                </div>
-            </div>
-            
-            <input type="text" id="secretCode" maxlength="6" placeholder="Enter 6-digit code" autofocus autocomplete="off">
-            <button onclick="handleSubmit()">Verify Code</button>
-            <button class="buy-button" onclick="openBuyLink()">Get New Code</button>
-            <p id="message"></p>
-            
-            <div class="device-info">
-                <strong>Security Features:</strong><br>
-                • Apple Device Verification<br>
-                • Safari Browser Optimized<br>
-                • Secure Local Storage<br>
-                • Encrypted Communication
-            </div>
-        </div>
+        
+        <div id="statusMessage" class="status"></div>
+        
+        <div id="redirectMessage" class="redirect-message"></div>
     </div>
 
     <script>
-        // ===== IMPROVED APPLE DEVICE DETECTION =====
-        
-        // Enhanced Apple device detection for Mac compatibility
+        // နောက်ဆုံးစစ်ဆေးချက်များ
         function isAppleDevice() {
-            const userAgent = navigator.userAgent;
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const platform = navigator.platform;
             
-            // Debug info
-            console.log('User Agent:', userAgent);
-            console.log('Platform:', platform);
-            console.log('Max Touch Points:', navigator.maxTouchPoints);
+            // 1. iOS device detection (iPhone, iPad, iPod)
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
             
-            // ===== 1. iOS Detection (iPhone, iPad, iPod) =====
-            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                const device = userAgent.match(/iPhone|iPad|iPod/)[0];
-                return {
-                    isApple: true,
-                    deviceType: 'iOS',
-                    device: device,
-                    platform: platform,
-                    details: `${device} detected via user agent`
-                };
-            }
+            // 2. macOS detection
+            const isMac = platform.includes('Mac');
             
-            // ===== 2. macOS Detection - IMPROVED =====
-            // Check for Mac platform (case-insensitive and more thorough)
-            const isMacPlatform = platform.toLowerCase().includes('mac');
+            // 3. iOS 13+ iPad detection (shows as Mac)
+            const isIpadOS = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
             
-            if (isMacPlatform) {
-                // Additional checks for macOS
-                const isMacIntel = platform === 'MacIntel';
-                const isMacPPC = platform === 'MacPPC';
-                const isMac68K = platform === 'Mac68K';
-                
-                // ===== 3. iPadOS 13+ Detection (appears as Mac) =====
-                // iPad with iPadOS 13+ will have touch points
-                if (navigator.maxTouchPoints && navigator.maxTouchPoints > 2) {
-                    return {
-                        isApple: true,
-                        deviceType: 'iPad',
-                        device: 'iPad (iPadOS 13+)',
-                        platform: platform,
-                        details: 'iPad detected via touch points on Mac platform'
-                    };
-                }
-                
-                // ===== 4. Regular macOS Detection =====
-                // Check for Safari on Mac (most reliable)
-                const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(userAgent);
-                
-                if (isSafari && isMacPlatform) {
-                    return {
-                        isApple: true,
-                        deviceType: 'macOS',
-                        device: 'Mac (Safari)',
-                        platform: platform,
-                        details: 'macOS Safari detected'
-                    };
-                }
-                
-                // ===== 5. Chrome/Firefox on Mac =====
-                // Allow Chrome and Firefox on Mac as well
-                if ((userAgent.includes('Chrome') || userAgent.includes('Firefox')) && isMacPlatform) {
-                    return {
-                        isApple: true,
-                        deviceType: 'macOS',
-                        device: `Mac (${userAgent.includes('Chrome') ? 'Chrome' : 'Firefox'})`,
-                        platform: platform,
-                        details: `macOS with ${userAgent.includes('Chrome') ? 'Chrome' : 'Firefox'} detected`
-                    };
-                }
-                
-                // ===== 6. Generic Mac detection =====
-                // If it's a Mac platform, allow it regardless of browser
-                return {
-                    isApple: true,
-                    deviceType: 'macOS',
-                    device: 'Mac',
-                    platform: platform,
-                    details: 'Mac platform detected'
-                };
-            }
+            // 4. Safari browser (common on Apple devices)
+            const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(userAgent);
             
-            // ===== 7. Additional Apple platform checks =====
-            if (platform === 'iPhone' || platform === 'iPad' || platform === 'iPod') {
-                return {
-                    isApple: true,
-                    deviceType: 'iOS',
-                    device: platform,
-                    platform: platform,
-                    details: 'iOS device detected via platform'
-                };
-            }
-            
-            // ===== 8. Check for "like Mac OS X" in user agent =====
-            if (userAgent.includes('like Mac OS X')) {
-                // This usually indicates iOS or iPadOS
-                if (userAgent.includes('iPhone')) {
-                    return {
-                        isApple: true,
-                        deviceType: 'iOS',
-                        device: 'iPhone',
-                        platform: platform,
-                        details: 'iPhone detected via "like Mac OS X"'
-                    };
-                } else if (userAgent.includes('iPad')) {
-                    return {
-                        isApple: true,
-                        deviceType: 'iOS',
-                        device: 'iPad',
-                        platform: platform,
-                        details: 'iPad detected via "like Mac OS X"'
-                    };
-                }
-            }
-            
-            // ===== 9. Fallback: Check for AppleWebKit (Apple's rendering engine) =====
-            if (userAgent.includes('AppleWebKit') && !userAgent.includes('Windows') && !userAgent.includes('Android')) {
-                // Could be Safari on macOS or other Apple device
-                return {
-                    isApple: true,
-                    deviceType: 'AppleWebKit',
-                    device: 'Apple Device',
-                    platform: platform,
-                    details: 'AppleWebKit detected (likely Apple device)'
-                };
-            }
-            
-            // ===== 10. NOT AN APPLE DEVICE =====
-            return {
-                isApple: false,
-                deviceType: 'Non-Apple',
-                device: platform,
-                platform: platform,
-                details: 'Non-Apple device detected',
-                userAgent: userAgent
-            };
+            // Return true if any Apple condition is met
+            return isIOS || isMac || isIpadOS || isSafari;
         }
         
-        // Get browser info
-        function getBrowserInfo() {
-            const userAgent = navigator.userAgent;
-            
-            if (userAgent.includes('Chrome') && !userAgent.includes('Edg') && !userAgent.includes('OPR')) {
+        // Browser detection
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Chrome') && !ua.includes('Edg') && !ua.includes('OPR')) {
                 return 'Chrome';
-            } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome') && !userAgent.includes('Chromium')) {
+            } else if (ua.includes('Safari') && !ua.includes('Chrome') && !ua.includes('Chromium')) {
                 return 'Safari';
-            } else if (userAgent.includes('Firefox')) {
+            } else if (ua.includes('Firefox')) {
                 return 'Firefox';
-            } else if (userAgent.includes('Edg')) {
+            } else if (ua.includes('Edg')) {
                 return 'Edge';
-            } else if (userAgent.includes('OPR')) {
+            } else if (ua.includes('OPR')) {
                 return 'Opera';
             } else {
-                return 'Other Browser';
+                return 'Unknown';
             }
         }
         
-        // Debug function to show detection details
-        function showDebugInfo() {
-            const appleInfo = isAppleDevice();
-            const browser = getBrowserInfo();
-            
-            document.getElementById('debugInfo').style.display = 'block';
-            document.getElementById('debugText').textContent = 
-                `isApple: ${appleInfo.isApple}, Type: ${appleInfo.deviceType}, Details: ${appleInfo.details}`;
+        // Platform detection
+        function detectPlatform() {
+            const platform = navigator.platform;
+            if (platform.includes('Win')) return 'Windows';
+            if (platform.includes('Mac')) return 'Mac';
+            if (platform.includes('Linux')) return 'Linux';
+            if (platform.includes('iPhone')) return 'iPhone';
+            if (platform.includes('iPad')) return 'iPad';
+            if (platform.includes('iPod')) return 'iPod';
+            if (platform.includes('Android')) return 'Android';
+            return platform || 'Unknown';
         }
         
-        // ===== MAIN DETECTION LOGIC =====
+        // Display device information
+        function displayDeviceInfo() {
+            document.getElementById('platform').textContent = detectPlatform();
+            document.getElementById('browser').textContent = detectBrowser();
+            document.getElementById('userAgent').textContent = navigator.userAgent.substring(0, 100) + '...';
+        }
         
+        // Handle redirection
+        function handleRedirection(isApple) {
+            const statusElement = document.getElementById('statusMessage');
+            const redirectElement = document.getElementById('redirectMessage');
+            const spinner = document.getElementById('spinner');
+            
+            if (isApple) {
+                // Apple device detected - redirect to bridge.html
+                statusElement.textContent = '✓ Apple Device Detected';
+                statusElement.className = 'status apple-status';
+                document.getElementById('appleStatus').textContent = 'Yes ✓';
+                document.getElementById('appleStatus').style.color = '#34C759';
+                
+                redirectElement.textContent = 'Redirecting to login.html...';
+                redirectElement.style.color = '#007AFF';
+                
+                // Show spinner during redirect
+                spinner.style.display = 'block';
+                
+                // Redirect after 0.5 seconds
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+                
+            } else {
+                // Non-Apple device - stay on index.html
+                statusElement.textContent = 'Non-Apple Device';
+                statusElement.className = 'status non-apple-status';
+                document.getElementById('appleStatus').textContent = 'No ✗';
+                document.getElementById('appleStatus').style.color = '#FF3B30';
+                
+                redirectElement.innerHTML = `
+                    This device is not an Apple device (iOS/Mac).<br>
+                    You will remain on this page.<br><br>
+                    <small>For Apple device users: You would be redirected to English-Bridge Digital Tool automatically.</small>
+                `;
+                redirectElement.style.color = '#FF9500';
+                
+                // Hide spinner
+                spinner.style.display = 'none';
+            }
+        }
+        
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Show loading state
-            document.getElementById('detectedDevice').innerHTML = '<span class="loading"></span> Detecting...';
+            // First, display device info
+            displayDeviceInfo();
             
+            // Check if Apple device
+            const isApple = isAppleDevice();
+            
+            // Handle redirection based on device type
             setTimeout(() => {
-                const appleInfo = isAppleDevice();
-                const browser = getBrowserInfo();
-                
-                // Update display info
-                document.getElementById('detectedDevice').textContent = appleInfo.device;
-                document.getElementById('detectedPlatform').textContent = appleInfo.platform;
-                document.getElementById('detectedBrowser').textContent = browser;
-                document.getElementById('userAgentShort').textContent = 
-                    navigator.userAgent.substring(0, 60) + '...';
-                
-                // For debugging (optional - remove in production)
-                showDebugInfo();
-                
-                if (appleInfo.isApple) {
-                    // Apple device detected - show main content
-                    document.getElementById('mainContent').style.display = 'flex';
-                    document.getElementById('mainContent').style.justifyContent = 'center';
-                    document.getElementById('mainContent').style.alignItems = 'center';
-                    document.getElementById('mainContent').style.minHeight = '100vh';
-                    document.getElementById('restrictedMessage').style.display = 'none';
-                    
-                    // Update device details
-                    const deviceDetails = document.getElementById('deviceDetails');
-                    deviceDetails.innerHTML = `
-                        ${appleInfo.deviceType} Device | ${browser} Browser<br>
-                        <small>${appleInfo.details}</small>
-                    `;
-                    
-                    // Auto-focus input field
-                    setTimeout(() => {
-                        const inputField = document.getElementById('secretCode');
-                        if (inputField) inputField.focus();
-                    }, 300);
-                    
-                    console.log('✅ Apple device detected:', appleInfo);
-                    console.log('🌐 Browser:', browser);
-                    
-                } else {
-                    // Non-Apple device - show restricted message
-                    document.getElementById('restrictedMessage').style.display = 'flex';
-                    document.getElementById('mainContent').style.display = 'none';
-                    document.body.style.overflow = 'hidden';
-                    
-                    console.log('❌ Non-Apple device detected:', appleInfo);
-                    console.log('🌐 Browser:', browser);
-                    console.log('📱 Full User Agent:', navigator.userAgent);
-                    
-                    // Show helpful message for Mac users who might be blocked incorrectly
-                    if (appleInfo.platform.toLowerCase().includes('mac') || 
-                        navigator.userAgent.toLowerCase().includes('mac')) {
-                        document.getElementById('detectedDevice').innerHTML = 
-                            '⚠️ Mac Detected But Failed Verification';
-                        document.getElementById('detectedPlatform').innerHTML = 
-                            'Try using Safari browser for best compatibility';
-                    }
-                }
-            }, 500); // Small delay to show loading animation
+                handleRedirection(isApple);
+            }, 500); // Small delay for user to see device info
+            
+            // Log details to console for debugging
+            console.log('=== Device Detection Results ===');
+            console.log('Platform:', detectPlatform());
+            console.log('Browser:', detectBrowser());
+            console.log('Is Apple Device:', isApple);
+            console.log('User Agent:', navigator.userAgent);
+            console.log('Navigator Platform:', navigator.platform);
+            console.log('Max Touch Points:', navigator.maxTouchPoints);
+            console.log('================================');
         });
         
-        // ===== ORIGINAL APPLICATION FUNCTIONS =====
-        
-        // Google Apps Script URL
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbw1BXgX4wy4nPZgSaJWFdBcV88OVliqn1pdQ88Xdwiz1x7MLp0lrYEyskJ1f5bnZdq-/exec';
-        
-        // LocalStorage Key
-        const storageKey = 'secureCodeData';
-        
-        // Enhanced Apple device verification for all functions
-        function verifyAppleDevice() {
-            const appleInfo = isAppleDevice();
-            if (!appleInfo.isApple) {
-                // Show restricted message and hide content
-                document.getElementById('restrictedMessage').style.display = 'flex';
-                document.getElementById('mainContent').style.display = 'none';
-                document.body.style.overflow = 'hidden';
-                return false;
-            }
-            return true;
+        // Optional: Add event listener for manual check button
+        function forceCheck() {
+            const isApple = isAppleDevice();
+            handleRedirection(isApple);
         }
-        
-        // Check for saved data (only if Apple device)
-        document.addEventListener('DOMContentLoaded', () => {
-            if (verifyAppleDevice()) {
-                const savedData = getSecureData();
-                if (savedData && savedData.expires > Date.now()) {
-                    window.location.href = savedData.url;
-                } else if (savedData && savedData.expires <= Date.now()) {
-                    localStorage.removeItem(storageKey);
-                }
-            }
-        });
-        
-        // Google Sheets မှ ကုဒ်များကို ဖတ်ရန်
-        async function fetchCodes() {
-            if (!verifyAppleDevice()) return [];
-            
-            try {
-                const response = await fetch(`${scriptUrl}?action=fetchCodes`);
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching codes:', error);
-                showError('Failed to fetch codes. Please check your connection.');
-                return [];
-            }
-        }
-        
-        // Code အသုံးပြုမှုကို Log ရန်
-        async function logCodeUsage(code) {
-            if (!verifyAppleDevice()) return;
-            
-            const deviceInfo = navigator.userAgent;
-            const appleInfo = isAppleDevice();
-            const enhancedDeviceInfo = `${deviceInfo} | AppleDevice:${appleInfo.deviceType}:${appleInfo.device}`;
-            
-            try {
-                const response = await fetch(`${scriptUrl}?action=logCode&code=${code}&deviceInfo=${encodeURIComponent(enhancedDeviceInfo)}`);
-                const data = await response.json();
-                if (data.error) {
-                    console.error('Error logging code usage:', data.error);
-                }
-            } catch (error) {
-                console.error('Error logging code usage:', error);
-            }
-        }
-        
-        // ကုဒ်စစ်ဆေးခြင်း
-        async function handleSubmit() {
-            if (!verifyAppleDevice()) {
-                showError('Access restricted to Apple devices only.');
-                return;
-            }
-            
-            const input = document.getElementById('secretCode');
-            const code = input.value.trim().toUpperCase();
-            
-            if (code.length !== 6) {
-                showError('Code must be 6 characters!');
-                return;
-            }
-            
-            const codes = await fetchCodes();
-            const matchedCode = codes.find(c => c.code === code);
-            
-            if (!matchedCode) {
-                showError('Invalid code or expired. Please try again.');
-                return;
-            }
-            
-            // Code အသုံးပြုမှုကို Log ရန်
-            await logCodeUsage(code);
-            
-            // ဒေတာသိမ်းဆည်းခြင်း
-            saveSecureData(matchedCode);
-            window.location.href = matchedCode.url;
-        }
-        
-        // ဒေတာသိမ်းဆည်းခြင်း
-        function saveSecureData(codeData) {
-            if (!verifyAppleDevice()) return;
-            
-            const expires = Date.now() + Number(codeData.duration);
-            const data = JSON.stringify({ 
-                code: codeData.code, 
-                expires, 
-                url: codeData.url,
-                device: isAppleDevice().deviceType 
-            });
-            localStorage.setItem(storageKey, btoa(data));
-        }
-        
-        // ဒေတာရယူခြင်း
-        function getSecureData() {
-            if (!verifyAppleDevice()) return null;
-            
-            try {
-                const data = localStorage.getItem(storageKey);
-                if (data) {
-                    return JSON.parse(atob(data));
-                }
-            } catch (error) {
-                console.error('Error reading secure data:', error);
-            }
-            return null;
-        }
-        
-        // အမှားပြသခြင်း
-        function showError(text) {
-            const msg = document.getElementById('message');
-            msg.className = 'error';
-            msg.textContent = text;
-            setTimeout(() => msg.textContent = '', 9000);
-        }
-        
-        // Enter Key အတွက်
-        document.getElementById('secretCode').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSubmit();
-        });
-        
-        // Code ဝယ်ယူရန် လင့်ခ်ဖွင့်ရန်
-        async function openBuyLink() {
-            if (!verifyAppleDevice()) {
-                showError('Please use an Apple device to purchase codes.');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${scriptUrl}?action=getBuyLink`);
-                const data = await response.json();
-                if (data.buyLink) {
-                    window.open(data.buyLink, '_blank');
-                } else {
-                    showError(data.error || 'Unable to load purchase link.');
-                }
-            } catch (error) {
-                console.error('Error fetching buy link:', error);
-                showError('Failed to load purchase link.');
-            }
-        }
-        
-        // Additional check for Mac users
-        function checkForMacUsers() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const platform = navigator.platform.toLowerCase();
-            
-            // If it looks like a Mac but was blocked
-            if ((platform.includes('mac') || userAgent.includes('mac')) && 
-                !document.getElementById('mainContent').style.display.includes('flex')) {
-                console.log('Potential Mac user blocked - showing help');
-                
-                // Add a help message for Mac users
-                const helpDiv = document.createElement('div');
-                helpDiv.style.cssText = `
-                    background: rgba(255,193,7,0.2);
-                    padding: 15px;
-                    border-radius: 10px;
-                    margin-top: 20px;
-                    border-left: 4px solid #ffc107;
-                `;
-                helpDiv.innerHTML = `
-                    <strong>Mac User?</strong><br>
-                    If you're using a Mac, please ensure:<br>
-                    1. You're using Safari, Chrome, or Firefox<br>
-                    2. JavaScript is enabled<br>
-                    3. Try refreshing the page<br>
-                    <small>If issues persist, contact support</small>
-                `;
-                
-                const container = document.querySelector('.restricted-container');
-                if (container) {
-                    container.appendChild(helpDiv);
-                }
-            }
-        }
-        
-        // Run Mac user check after page loads
-        setTimeout(checkForMacUsers, 1000);
     </script>
 </body>
 </html>
