@@ -4,16 +4,13 @@
 <head>
 
  <script>
-        // Check if the page was accessed directly or from another site
         const referrer = document.referrer;
         const currentOrigin = window.location.origin;
         
-        // ဒီ condition ကို သင့်လိုအပ်ချက်အရ ပြင်ဆင်နိုင်ပါတယ်
         if (referrer === "" || 
             !referrer.includes(currentOrigin) || 
             !referrer.includes("login.html")) {
-            
-            // Direct access ဖြစ်ရင် login.html ကို redirect လုပ်ပါ
+
             window.location.href = "login.html";
         }
     </script>
